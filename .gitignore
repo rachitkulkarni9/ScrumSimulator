@@ -1,0 +1,81 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Build directories
+build/
+bin/
+out/
+target/
+
+# Maven specific
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Gradle specific
+.gradle/
+build/
+!gradle-wrapper.jar
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+out/
+
+# Eclipse IDE files
+.project
+.classpath
+.settings/
+
+# NetBeans IDE files
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Generated JUnit or test reports
+test-reports/
+*.xml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variable files
+.env
+
+# Other IDE specific files
+.vscode/
+*.swp
+
+# Docker files
+docker-compose.override.yml
+Dockerfile~
+
+# Generated buildOutput folder
+buildOutput/

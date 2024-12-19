@@ -1,0 +1,132 @@
+/*
+Adapted (and modified) from SER316 project
+ */
+
+import java.text.SimpleDateFormat
+
+plugins {
+    id "com.github.spotbugs" version "4.8.0"
+    id "checkstyle"
+    id 'com.diffplug.spotless' version '6.22.0'
+}
+
+apply plugin: 'application'
+apply plugin: 'jacoco'
+apply plugin: "com.github.spotbugs"
+
+sourceCompatibility = '21'
+targetCompatibility = '21'
+
+mainClassName = 'com.groupesan.project.java.scrumsimulator.mainpackage.StartSimulator' //TODO: this is a bit much, we should probably simplify it at some point
+
+compileJava.options.encoding = 'UTF-8'
+
+// Repositories and dependencies for code go here
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.json:json:20230618' // org.json in maven repo
+    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0'
+    spotbugs 'com.github.spotbugs:spotbugs:4.8.0'
+    implementation 'com.formdev:flatlaf:3.2.5'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5' // potential spotbugs issue
+    implementation 'org.apache.commons:commons-lang3:3.13.0'
+
+    // JUnit 5 for unit testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+
+    // Mockito for mocking
+    //testImplementation 'org.mockito:mockito-core:5.11.0'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
+    // Mockito JUnit Jupiter extension
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
+
+    // AssertJ for fluent assertions (optional)
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+
+    compileOnly 'org.projectlombok:lombok:1.18.32' // Or a newer version that supports Java 22
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+    testImplementation 'org.mockito:mockito-core:4.0.0'
+}
+
+version = "0.1"
+
+//create a version properties file that can be shown in loading/about screens to show what version we are running.
+task createProperties(dependsOn: processResources) {
+    doLast {
+        new File("$buildDir/resources/main/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss")
+            format.setTimeZone(TimeZone.getTimeZone("UTC"))
+
+            p['version'] = project.version.toString()
+            p['build'] = format.format(new Date())
+
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
+}
+
+///////////////////////////////////////////////////////////////////////
+// Configure Checkstyle
+/////////////////////////////////////////////////////////////////////
+apply plugin: 'checkstyle'
+checkstyle {
+    // Keep checkstyle a little quieter
+    //ignoreFailures = true
+    //showViolations = false
+}
+
+//tasks.withType(Checkstyle) {
+//
+//    reports {
+//        html.enabled = true
+//        xml.enabled = false
+//    }
+//    include '**/*.java'
+//    //include '**/ui/App.java'
+//}
+
+checkstyle {
+    toolVersion = "8.8"
+}
+
+
+///////////////////////////////////////////////////////////////////////
+// Configure SpotBugs
+///////////////////////////////////////////////////////////////////////
+// To generate an HTML report instead of XML
+spotbugsMain{
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+spotbugs {
+    toolVersion = '4.8.0'
+    ignoreFailures = true
+    showProgress = true
+    effort = 'max'
+    excludeFilter = file('config/spotbugs/exclude.xml')
+}
+
+// junit testing
+test {
+    useJUnitPlatform()
+    systemProperty 'java.awt.headless', 'false' // headless for gui
+}
+
+// google java format
+spotless {
+    java {
+        googleJavaFormat('1.17.0')
+    }
+}
